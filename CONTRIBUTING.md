@@ -53,7 +53,7 @@ Enhancement suggestions are welcome! Please provide:
 ### Prerequisites
 
 - Terraform >= 1.5.0
-- Access to a Nutanix cluster (for testing)
+- Access to a Nutanix cluster (for testing) or potentially Community Edition
 - Git
 - Text editor/IDE with HCL support
 
@@ -61,7 +61,7 @@ Enhancement suggestions are welcome! Please provide:
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/terraform-sap-nutanix.git
+git clone https://github.com/basraayman/terraform-sap-nutanix.git
 cd terraform-sap-nutanix
 
 # Create a branch for your work
