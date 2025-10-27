@@ -8,7 +8,8 @@ A comprehensive Terraform library for provisioning SAP workloads on Nutanix infr
 
 **Please read the full [DISCLAIMER](./DISCLAIMER.md) before using this project.**
 
-**  Here be dragons! **
+** Here be dragons!**:
+
 This project is a work in progress and is not officially supported by SAP or Nutanix. I have created this project in my spare time to help myself and others learn about Terraform. Some of the code is auto generated, other parts are based on best practices, SAP notes, best practice guides on Nutanix, and my personal experience. Expect bugs and incomplete features, or even broken code. Please report any issues you find, or even better, submit a pull request. :-)
 
 ## Overview
