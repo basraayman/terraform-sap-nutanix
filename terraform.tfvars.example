@@ -1,0 +1,54 @@
+# ============================================================================
+# Terraform SAP on Nutanix - Example Configuration
+# ============================================================================
+#
+# Copy this file to terraform.tfvars and customize for your environment
+# cp terraform.tfvars.example terraform.tfvars
+#
+# ============================================================================
+
+# ============================================================================
+# Nutanix Connection Details
+# ============================================================================
+
+nutanix_username = "admin"
+nutanix_password = "YourSecurePassword"  # Consider using environment variables
+nutanix_endpoint = "10.10.233.30"
+nutanix_port     = 9440
+nutanix_insecure = true
+nutanix_wait_timeout = 60
+
+# ============================================================================
+# Infrastructure Configuration
+# ============================================================================
+
+cluster_name = "Production-Cluster"
+subnet_name  = "SAP-Production-VLAN234"
+
+# ============================================================================
+# SAP Environment
+# ============================================================================
+
+environment         = "prod"  # dev, test, qa, prod, sandbox
+sap_landscape_name  = "sap-prod"
+
+# ============================================================================
+# Tagging
+# ============================================================================
+
+tags = {
+  CostCenter  = "SAP-Operations"
+  Owner       = "SAP-Team"
+  Backup      = "Daily"
+  Compliance  = "SOX"
+  Project     = "S4HANA-Migration"
+}
+
+# ============================================================================
+# Ansible Integration
+# ============================================================================
+
+generate_ansible_inventory = true
+ansible_inventory_path     = "./ansible/inventory/hosts"
+ansible_connection_user    = "root"
+

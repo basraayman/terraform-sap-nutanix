@@ -1,0 +1,44 @@
+# ============================================================================
+# Example Configuration - SAP S/4HANA Distributed System
+# ============================================================================
+
+# Nutanix Connection
+nutanix_username = "admin"
+nutanix_password = "YourPassword"
+nutanix_endpoint = "10.10.10.39"
+
+# Infrastructure
+cluster_name = "Production-Cluster"
+subnet_name  = "SAP-Production"
+
+# Environment
+environment = "prod"
+
+# SAP Configuration
+sap_sid = "S4P"
+
+# Network - Base IP for static addressing
+# VMs will be assigned: .10 (DB), .11 (ASCS), .12 (ERS), .20 (PAS), .21-22 (AAS), .30 (WDP)
+ip_base = "10.10.10"
+
+# OS Image
+os_image_name = "SLES15-SP5-SAP"
+
+# SSH Keys
+ssh_keys = [
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... sap-admin@company.com"
+]
+
+# Timezone
+timezone = "Europe/Berlin"
+
+# Tags
+tags = {
+  CostCenter  = "SAP-Operations"
+  Project     = "S4HANA-Production"
+  Owner       = "SAP-Basis-Team"
+  Backup      = "Daily"
+  Compliance  = "SOX"
+  Environment = "Production"
+}
+

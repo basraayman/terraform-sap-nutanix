@@ -1,0 +1,45 @@
+# ============================================================================
+# Example Configuration - SAP HANA Single Node
+# ============================================================================
+#
+# Copy this file to terraform.tfvars and customize for your environment
+# cp terraform.tfvars.example terraform.tfvars
+#
+# ============================================================================
+
+# Nutanix Connection
+nutanix_username = "admin"
+nutanix_password = "YourPassword"  # Use environment variable in production
+nutanix_endpoint = "10.10.10.39"
+
+# Infrastructure
+cluster_name = "Production-Cluster"
+subnet_name  = "SAP-Production"
+
+# Environment
+environment = "prod"
+
+# SAP HANA Configuration
+hana_sid        = "HDB"
+hana_ip_address = "10.10.10.50"
+
+# OS Image
+os_image_name = "SLES15-SP5-SAP"
+
+# SSH Keys
+ssh_keys = [
+  "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ... user@host"
+]
+
+# Timezone
+timezone = "Europe/Berlin"
+
+# Organization
+owner = "SAP-Basis-Team"
+
+tags = {
+  CostCenter = "SAP-01"
+  Project    = "HANA-Production"
+  Backup     = "Daily"
+}
+

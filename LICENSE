@@ -1,0 +1,41 @@
+MIT License
+
+Copyright (c) 2024 Terraform SAP on Nutanix Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DISCLAIMER: This is a private, community-driven initiative and is NOT officially 
+supported or endorsed by SAP SE or Nutanix, Inc. This software is provided as-is 
+without warranty of any kind. Users are solely responsible for validating all 
+configurations against official SAP and Nutanix documentation before any use, 
+especially in production environments.
+
+For official support, please contact:
+- SAP: https://support.sap.com
+- Nutanix: https://www.nutanix.com/support-services
+
+This project implements SAP notes and best practices which are copyright of SAP SE.
+SAP and SAP product names mentioned herein are trademarks or registered trademarks of SAP SE.
+
+Nutanix is a trademark or registered trademark of Nutanix, Inc.
+
+All trademarks and registered trademarks are the property of their respective owners.
+

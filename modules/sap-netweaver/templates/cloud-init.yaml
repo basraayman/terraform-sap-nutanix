@@ -1,0 +1,61 @@
+#cloud-config
+# Cloud-init configuration for SAP NetWeaver VM
+
+hostname: ${hostname}
+fqdn: ${hostname}.local
+manage_etc_hosts: true
+
+# Timezone configuration
+timezone: ${timezone}
+
+# SSH configuration
+ssh_pwauth: false
+disable_root: false
+
+# SSH authorized keys
+%{ if length(ssh_authorized_keys) > 0 ~}
+ssh_authorized_keys:
+%{ for key in ssh_authorized_keys ~}
+  - ${key}
+%{ endfor ~}
+%{ endif ~}
+
+# Package management
+package_update: true
+package_upgrade: false
+package_reboot_if_required: false
+
+# Install additional packages
+packages:
+  - tuned
+  - chrony
+  - rsyslog
+  - net-tools
+%{ if length(additional_packages) > 0 ~}
+%{ for package in additional_packages ~}
+  - ${package}
+%{ endfor ~}
+%{ endif ~}
+
+# Write files
+write_files:
+  - path: /etc/sap_deployment_info.txt
+    permissions: '0644'
+    content: |
+      SAP System Type: NetWeaver
+      SAP SID: ${sap_sid}
+      Instance Number: ${instance_number}
+      Instance Type: ${instance_type}
+      Deployment Date: $(date)
+      Deployed by: Terraform
+
+# Run commands on first boot
+runcmd:
+  - echo "SAP NetWeaver VM initialization started" >> /var/log/cloud-init-sap.log
+  - systemctl enable chronyd
+  - systemctl start chronyd
+  - echo "Cloud-init configuration complete" >> /var/log/cloud-init-sap.log
+
+# Final message
+final_message: "SAP NetWeaver VM ${hostname} is ready. Duration: $UPTIME seconds"
+
