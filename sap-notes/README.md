@@ -21,11 +21,13 @@ Each SAP note has its own `.tf` file containing:
 
 | SAP Note | Title | Module | Status |
 |----------|-------|--------|--------|
-| [1944799](https://launchpad.support.sap.com/#/notes/1944799) | SAP HANA Guidelines for Nutanix Systems | `sap-hana` | Implemented |
-| [2205917](https://launchpad.support.sap.com/#/notes/2205917) | SAP HANA Storage Requirements | `sap-hana` | Implemented |
-| [2015553](https://launchpad.support.sap.com/#/notes/2015553) | SAP on Linux: General Prerequisites | All | Implemented |
-| [2684254](https://launchpad.support.sap.com/#/notes/2684254) | SAP HANA on Nutanix AHV - Certification | `sap-hana` | Implemented |
-| [2235581](https://launchpad.support.sap.com/#/notes/2235581) | SAP HANA: Supported Operating Systems | All | Reference |
+| [1944799](https://launchpad.support.sap.com/#/notes/1944799) | SAP HANA Guidelines for SLES Operating System Installation | `sap-hana` | Implemented |
+| [1900823](https://launchpad.support.sap.com/#/notes/1900823) | SAP HANA Storage Connector API | `sap-hana` | Implemented |
+| [2686722](https://launchpad.support.sap.com/#/notes/2686722) | SAP HANA virtualized on Nutanix AOS | `sap-hana` | Implemented |
+| [2205917](https://launchpad.support.sap.com/#/notes/2205917) | SAP HANA: OS Settings for SLES 12 | All | Implemented |
+| [2684254](https://me.sap.com/notes/2684254) | SAP HANA: OS Settings for SLES 15 | All | Implemented |
+| [2772999](https://launchpad.support.sap.com/#/notes/2772999) | Red Hat Enterprise Linux 8.x: Installation and Configuration | All | Implemented |
+| [3108316](https://launchpad.support.sap.com/#/notes/3108316) | Red Hat Enterprise Linux 9.x: Installation and Configuration | All | Implemented |
 
 ### OS-Specific Notes
 
@@ -115,33 +117,117 @@ output "kernel_params_123456" {
 
 ## SAP Note Details
 
-### SAP Note 1944799 - SAP HANA Guidelines for Nutanix
+### SAP Note 1944799 - SAP HANA Guidelines for SLES Operating System Installation
 
 **Key Requirements:**
-- CPU: Intel Xeon processors (Cascade Lake or newer recommended)
-- Memory: Minimum 64 GB, maximum 12 TB per VM
-- NUMA: Proper NUMA alignment for systems > 256 GB
-- Storage: See SAP Note 2205917
+- SLES OS preparation and configuration
+- Required packages and repositories
+- Kernel parameter tuning
+- File system requirements
 
 **Implementation:**
-- T-shirt sizing presets (XS, S, M, L, XL)
-- Automatic NUMA topology configuration
-- Validated memory and CPU combinations
+- Cloud-init package installation
+- OS configuration templates
+- SLES-specific setup
 
-### SAP Note 2205917 - Storage Requirements
+### SAP Note 1900823 - SAP HANA Storage Connector API
 
-**Key Requirements:**
-- Data: ≥ 1x RAM (striped across multiple disks)
-- Log: ≥ 0.5x RAM (separate from data)
-- Shared: ≥ 1x RAM (single volume)
-- Backup: ≥ 2x RAM (recommended)
+**Key Requirements per SAP Note 1900823:**
+- **Data**: 1.5x RAM (striped across multiple disks)
+- **Log**: 0.5x RAM for systems ≤512GB, minimum 512GB for systems >512GB
+- **Shared (single-node)**: MIN(1x RAM, 1TB)
+- **Shared (scale-out)**: 1x RAM per 4 worker nodes
+- **Backup**: ≥ 2x RAM (recommended)
 
 **Implementation:**
-- Automatic size calculation based on memory
-- Multiple disk striping for data and log
+- Automatic size calculation based on official formulas
+- Multiple disk striping for performance (2 or 4 disks based on size)
 - Separate volumes per requirement
+- T-shirt sizing:
+  - XS/S: 2 data disks, 2 log disks
+  - M/L/XL: 4 data disks, 4 log disks
 
-### SAP Note 2015553 - General Linux Prerequisites
+### SAP Note 2205917 - OS Settings for SLES 12
+
+**Key Requirements:**
+- OS packages: saptune, sapconf
+- Kernel parameters for HANA
+- File system configuration (XFS recommended)
+- Resource limits
+
+**Implementation:**
+- Cloud-init package installation
+- Kernel parameter templates
+- saptune/sapconf integration
+
+### SAP Note 2686722 - SAP HANA virtualized on Nutanix AOS
+
+**Key Requirements:**
+- Nutanix AHV virtualization settings
+- CPU configuration (vNUMA, pinning, threads)
+- Memory reservation (100% required)
+- Storage protocol and configuration
+
+**Implementation:**
+- Automatic VM configuration via Terraform
+- Post-deployment acli commands for advanced CPU settings
+- Documentation for manual configuration steps
+
+**Important**: vNUMA, CPU pinning, and thread configuration require manual acli commands post-deployment.
+
+### SAP Note 2205917 - OS Settings for SLES 12
+
+**Key Requirements:**
+- SLES 12-specific packages
+- Kernel parameters
+- saptune/sapconf configuration
+
+**Implementation:**
+- Package installation via cloud-init
+- Kernel parameter templates
+
+### SAP Note 2684254 - OS Settings for SLES 15
+
+**Key Requirements:**
+- SLES 15-specific packages
+- Updated kernel parameters
+- saptune solution profiles
+- AppArmor configuration
+
+**Implementation:**
+- SLES 15-specific package lists
+- Modern saptune integration
+- Cloud-init support for SLES 15
+
+### SAP Note 2772999 - Red Hat Enterprise Linux 8.x: Installation and Configuration
+
+**Key Requirements:**
+- RHEL 8 specific packages
+- Kernel parameters for RHEL 8
+- tuned profiles for SAP
+- SELinux configuration
+
+**Implementation:**
+- RHEL 8 package lists
+- tuned-profiles-sap-hana integration
+- Cloud-init support for RHEL 8
+
+### SAP Note 3108316 - Red Hat Enterprise Linux 9.x: Installation and Configuration
+
+**Key Requirements:**
+- RHEL 9 specific packages
+- Updated kernel parameters for RHEL 9
+- Modern tuned profiles
+- SELinux and security settings
+
+**Implementation:**
+- RHEL 9 package lists
+- Latest tuned profile integration
+- Cloud-init support for RHEL 9
+
+### SAP Note 2015553 (REMOVED)
+
+This note was previously referenced but has been removed as it contains Azure-specific instructions that are not applicable to Nutanix deployments.
 
 **Key Requirements:**
 - Supported OS versions (SLES 15 SP4+, RHEL 8.4+)

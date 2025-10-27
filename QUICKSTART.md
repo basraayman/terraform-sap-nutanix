@@ -47,6 +47,8 @@ terraform apply
 
 **Time**: ~10 minutes
 
+**Note**: After deployment, configure vNUMA and CPU pinning using acli commands. See [POST_DEPLOYMENT_CPU_CONFIG.md](./docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md).
+
 ---
 
 ### 2. Complete SAP S/4HANA System
@@ -235,7 +237,21 @@ ssh root@$(terraform output -json | jq -r '.hana_database.value.ip_address')
 ansible-playbook -i $(terraform output -raw ansible_inventory_path) install.yml
 ```
 
-### 4. Apply SAP Tuning
+### 4. Configure CPU Settings (Required for Production)
+```bash
+# On Nutanix CVM - Configure vNUMA and CPU pinning
+# See docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md for details
+acli vm.off <vm_name>
+acli vm.update <vm_name> num_threads_per_core=1
+acli vm.update <vm_name> \
+  num_vcpus=2 \
+  num_vnuma_nodes=2 \
+  num_cores_per_vcpu=16 \
+  vcpu_hard_pin=True
+acli vm.on <vm_name>
+```
+
+### 5. Apply SAP Tuning
 ```bash
 # On each VM
 tuned-adm profile sap-hana  # or sap-netweaver

@@ -4,9 +4,12 @@
 #
 # This module deploys SAP HANA VMs on Nutanix following SAP notes:
 # - SAP Note 1944799: SAP HANA Guidelines for Nutanix Systems
-# - SAP Note 2205917: SAP HANA on Nutanix Storage Requirements
+# - SAP Note 1900823: SAP HANA Storage Requirements (sizing formulas)
+# - SAP Note 2205917: OS Settings for SLES 12
+# - SAP Note 2684254: OS Settings for SLES 15
 # - SAP Note 2015553: SAP on Linux General Prerequisites
-# - SAP Note 2684254: SAP HANA on Nutanix Certification
+#
+# Sizing Guidelines: https://www.sap.com/about/benchmark/sizing.sizing-guidelines.html
 #
 # ============================================================================
 
@@ -45,13 +48,14 @@ locals {
   cluster_uuid = var.cluster_uuid != "" ? var.cluster_uuid : data.nutanix_cluster.cluster[0].id
   subnet_uuid  = var.subnet_uuid != "" ? var.subnet_uuid : data.nutanix_subnet.subnet[0].id
 
-  # SAP HANA sizing guidelines per SAP Note 1944799
+  # SAP HANA T-shirt sizing for virtualized environments
+  # Based on SAP sizing guidelines: https://www.sap.com/about/benchmark/sizing.sizing-guidelines.html
   sap_sizing_presets = {
     "XS" = { memory = 64, vcpus = 8, data_disks = 2, log_disks = 2 }
-    "S"  = { memory = 128, vcpus = 16, data_disks = 3, log_disks = 2 }
-    "M"  = { memory = 256, vcpus = 32, data_disks = 4, log_disks = 3 }
-    "L"  = { memory = 512, vcpus = 64, data_disks = 4, log_disks = 3 }
-    "XL" = { memory = 1024, vcpus = 96, data_disks = 6, log_disks = 4 }
+    "S"  = { memory = 128, vcpus = 16, data_disks = 2, log_disks = 2 }
+    "M"  = { memory = 256, vcpus = 32, data_disks = 4, log_disks = 4 }
+    "L"  = { memory = 512, vcpus = 64, data_disks = 4, log_disks = 4 }
+    "XL" = { memory = 1024, vcpus = 96, data_disks = 4, log_disks = 4 }
   }
 
   # Use preset or custom values
@@ -62,15 +66,16 @@ locals {
   actual_data_disks = local.use_preset ? local.sizing_config.data_disks : var.data_disk_count
   actual_log_disks  = local.use_preset ? local.sizing_config.log_disks : var.log_disk_count
 
-  # SAP HANA storage calculations per SAP Note 2205917
-  # Data: 1x RAM (minimum)
-  data_disk_size_gb = var.data_disk_size_gb > 0 ? var.data_disk_size_gb : ceil(local.actual_memory / local.actual_data_disks)
+  # SAP HANA storage calculations per SAP Note 1900823
+  # Data: 1.5x RAM
+  data_disk_size_gb = var.data_disk_size_gb > 0 ? var.data_disk_size_gb : ceil((local.actual_memory * 1.5) / local.actual_data_disks)
   
-  # Log: 0.5x RAM (minimum)
-  log_disk_size_gb = var.log_disk_size_gb > 0 ? var.log_disk_size_gb : ceil((local.actual_memory * 0.5) / local.actual_log_disks)
+  # Log: 0.5x RAM for systems ≤ 512GB, minimum 512GB for systems > 512GB
+  log_total_size_gb = local.actual_memory <= 512 ? (local.actual_memory * 0.5) : 512
+  log_disk_size_gb = var.log_disk_size_gb > 0 ? var.log_disk_size_gb : ceil(local.log_total_size_gb / local.actual_log_disks)
   
-  # Shared: typically 1x RAM
-  shared_disk_size_gb = var.shared_disk_size_gb > 0 ? var.shared_disk_size_gb : local.actual_memory
+  # Shared (single-node): MIN(1x RAM, 1 TB)
+  shared_disk_size_gb = var.shared_disk_size_gb > 0 ? var.shared_disk_size_gb : min(local.actual_memory, 1024)
 
   # Backup: typically 2x RAM for data + log
   backup_disk_size_gb = var.backup_disk_size_gb > 0 ? var.backup_disk_size_gb : (local.actual_memory * 2)

@@ -1,29 +1,31 @@
 # ============================================================================
-# SAP Note 2205917 - SAP HANA Storage Requirements
+# SAP Note 2205917 - SAP HANA DB: Recommended OS Settings for SLES 12
 # ============================================================================
 #
-# This file contains storage configuration values derived from SAP Note 2205917
-# which defines storage requirements for SAP HANA databases.
+# This file contains OS configuration recommendations from SAP Note 2205917
+# for SLES 12 / SLES for SAP Applications 12.
 #
 # Link: https://launchpad.support.sap.com/#/notes/2205917
+#
+# Note: For SLES 15, see SAP Note 2684254
+# Note: For storage sizing, see SAP Note 1900823
 #
 # ============================================================================
 
 locals {
   sap_note_2205917 = {
     note_number = "2205917"
-    title       = "SAP HANA DB: Recommended OS Settings for SLES"
+    title       = "SAP HANA DB: Recommended OS Settings for SLES 12 / SLES for SAP Applications 12"
     version     = "Latest"
+    applies_to  = "SLES 12"
     
     # ========================================================================
-    # Storage Volume Requirements
+    # OS Configuration for SLES 12
     # ========================================================================
-    volumes = {
-      # /hana/data - Main database storage
-      data = {
-        min_size_ratio_to_ram = 1.0    # Minimum 1x RAM
-        rec_size_ratio_to_ram = 1.2    # Recommended 1.2x RAM
-        max_size_ratio_to_ram = 2.0    # Maximum typically needed
+    os_packages = {
+      required = [
+        "saptune",
+        "sapconf",
         
         # Disk configuration
         min_disks             = 1
@@ -216,27 +218,39 @@ locals {
     }
     
     # ========================================================================
-    # Disk Organization Best Practices
+    # Disk Organization Best Practices (Nutanix LVM-based)
     # ========================================================================
     best_practices = {
+      volume_management = {
+        technology            = "LVM"  # Use LVM, not RAID
+        stripe_size_kb        = 1024   # 1MB stripe size for LVM
+        use_full_capacity     = true   # Always use 100% (-l 100%FREE)
+        separate_os_disk      = true   # OS disk separate from data VGs
+      }
+      
       data_striping = {
         enabled               = true
-        stripe_size_kb        = 256
+        stripe_size_kb        = 1024   # 1MB for LVM
         min_disks_for_stripe  = 2
-        raid_level            = "RAID-0"  # Nutanix handles redundancy
+        volume_group          = "hanadata"
+        logical_volume        = "vol"
+        lvcreate_options      = "-i <count> -I1M -l 100%FREE -r none"
       }
       
       log_striping = {
         enabled               = true
-        stripe_size_kb        = 64
+        stripe_size_kb        = 1024   # 1MB for LVM
         min_disks_for_stripe  = 2
-        raid_level            = "RAID-0"
+        volume_group          = "hanalog"
+        logical_volume        = "vol"
+        lvcreate_options      = "-i <count> -I1M -l 100%FREE -r none"
       }
       
       separation = {
-        data_log_separate     = true   # Data and log must be separate
-        backup_can_share      = false  # Backup should be separate
-        shared_can_share      = false  # Shared should be separate
+        data_log_separate     = true   # Data and log must be on separate VGs
+        backup_can_share      = false  # Backup should be separate VG
+        shared_can_share      = false  # Shared should be separate VG
+        os_must_be_separate   = true   # OS disk must be separate
       }
       
       thin_provisioning = {
@@ -244,6 +258,15 @@ locals {
         log_volume            = false  # Not recommended for log
         shared_volume         = false  # Not recommended for shared
         backup_volume         = true   # OK for backup
+        note                  = "Nutanix thin provisioning at storage layer is acceptable"
+      }
+      
+      filesystem = {
+        type                  = "xfs"
+        mount_options         = "inode64,largeio,swalloc"
+        format_command        = "mkfs.xfs"
+        fstab_dump_option     = 1
+        fstab_pass_option     = 2
       }
     }
   }

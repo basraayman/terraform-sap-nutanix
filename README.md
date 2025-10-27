@@ -35,11 +35,13 @@ The following SAP notes are incorporated into the module configurations:
 
 | SAP Note | Description | Module |
 |----------|-------------|--------|
-| 1944799 | SAP HANA Guidelines for Nutanix Systems | sap-hana |
-| 2205917 | SAP HANA Storage Requirements | sap-hana |
-| 2015553 | SAP on Linux: General Prerequisites | all |
-| 2684254 | SAP HANA on Nutanix Certification | sap-hana |
-| 2235581 | SAP HANA: Supported Operating Systems | all |
+| 1944799 | SAP HANA Guidelines for SLES Operating System Installation | sap-hana |
+| 1900823 | SAP HANA Storage Connector API | sap-hana |
+| 2686722 | SAP HANA virtualized on Nutanix AOS | sap-hana |
+| 2205917 | SAP HANA: OS Settings for SLES 12 | all |
+| 2684254 | SAP HANA: OS Settings for SLES 15 | all |
+| 2772999 | Red Hat Enterprise Linux 8.x: Installation and Configuration | all |
+| 3108316 | Red Hat Enterprise Linux 9.x: Installation and Configuration | all |
 
 ## Prerequisites
 
@@ -164,19 +166,33 @@ module "s4hana" {
     └── s4hana-distributed/            # Distributed S/4HANA
 ```
 
-## Module Documentation
+## Documentation
 
-### SAP HANA Module
+### Main Documentation
+
+- **[Documentation Index](./docs/README.md)** - Complete documentation overview
+- **[CHANGELOG](./CHANGELOG.md)** - Version history and changes
+- **[QUICKSTART](./QUICKSTART.md)** - Quick start guide
+- **[CONTRIBUTING](./CONTRIBUTING.md)** - Contribution guidelines
+
+### Operations Guides
+
+- **[LVM Storage Configuration](./docs/operations/LVM_STORAGE_CONFIGURATION.md)** - Complete LVM setup guide
+- **[Post-Deployment CPU Configuration](./docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md)** - vNUMA and CPU pinning
+
+### Module Documentation
+
+#### SAP HANA Module
 
 The SAP HANA module creates VMs optimized for SAP HANA databases with:
 - Correct CPU and memory ratios per SAP sizing
-- Storage layout following SAP Note 2205917
+- LVM-based storage layout following SAP Note 1900823
 - NUMA optimization
 - Network performance tuning
 
 [Full documentation](./modules/sap-hana/README.md)
 
-### SAP NetWeaver Module
+#### SAP NetWeaver Module
 
 The NetWeaver module provisions application servers with:
 - Flexible sizing for PAS, AAS, and Web Dispatcher
@@ -185,7 +201,7 @@ The NetWeaver module provisions application servers with:
 
 [Full documentation](./modules/sap-netweaver/README.md)
 
-### SAP S/4HANA Module
+#### SAP S/4HANA Module
 
 The S/4HANA module orchestrates complete system deployments:
 - HANA database + application tier
@@ -193,6 +209,16 @@ The S/4HANA module orchestrates complete system deployments:
 - Central Services (ASCS/ERS) with high availability options
 
 [Full documentation](./modules/sap-s4hana/README.md)
+
+### SAP Notes Documentation
+
+- **[SAP Notes Library](./sap-notes/README.md)** - Implemented SAP notes and compliance details
+
+### Update Notes
+
+- **[Updates Index](./docs/updates/README.md)** - Detailed update summaries
+- [2024-10-27: LVM Storage Configuration](./docs/updates/2024-10-27-lvm-storage-configuration.md)
+- [2024-10-26: SAP Notes Corrections](./docs/updates/2024-10-26-sap-notes-corrections.md)
 
 ## Adding New SAP Notes
 
@@ -276,11 +302,24 @@ To extend this library:
 
 Note: This is a community-driven project and not officially endorsed by SAP or Nutanix.
 
+## Important: Post-Deployment Configuration
+
+The Nutanix Terraform provider does not support advanced CPU configuration (vNUMA, CPU pinning, threads per core). These settings are **required for production SAP HANA systems** and must be configured manually after deployment using `acli` commands.
+
+See [POST_DEPLOYMENT_CPU_CONFIG.md](./docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md) for complete instructions.
+
 ## References
 
+- [SAP Sizing Guidelines](https://www.sap.com/about/benchmark/sizing.sizing-guidelines.html) - Official SAP sizing
 - [Nutanix Terraform Provider Documentation](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs)
 - [SAP on Nutanix Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
-- [SAP Note 1944799 - SAP HANA Guidelines for Nutanix Systems](https://launchpad.support.sap.com/#/notes/1944799)
+- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799) - SLES OS Installation
+- [SAP Note 1900823](https://launchpad.support.sap.com/#/notes/1900823) - Storage Connector API
+- [SAP Note 2686722](https://launchpad.support.sap.com/#/notes/2686722) - HANA on Nutanix AOS
+- [SAP Note 2205917](https://launchpad.support.sap.com/#/notes/2205917) - OS Settings for SLES 12
+- [SAP Note 2684254](https://me.sap.com/notes/2684254) - OS Settings for SLES 15
+- [SAP Note 2772999](https://launchpad.support.sap.com/#/notes/2772999) - RHEL 8.x Installation
+- [SAP Note 3108316](https://launchpad.support.sap.com/#/notes/3108316) - RHEL 9.x Installation
 
 ## License
 

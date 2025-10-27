@@ -18,10 +18,13 @@ This Terraform module deploys SAP HANA virtual machines on Nutanix infrastructur
 
 | SAP Note | Description | Implementation |
 |----------|-------------|----------------|
-| 1944799 | SAP HANA Guidelines for Nutanix | CPU/Memory sizing, NUMA topology |
-| 2205917 | SAP HANA Storage Requirements | Disk layout, sizes, separation |
-| 2015553 | SAP on Linux Prerequisites | OS requirements, kernel parameters |
-| 2684254 | SAP HANA on Nutanix Certification | Validated configurations |
+| 1944799 | SAP HANA Guidelines for SLES Operating System Installation | OS configuration, packages |
+| 1900823 | SAP HANA Storage Connector API | Storage sizing and configuration |
+| 2686722 | SAP HANA virtualized on Nutanix AOS | Virtualization-specific settings |
+| 2205917 | OS Settings for SLES 12 | Kernel parameters, packages |
+| 2684254 | OS Settings for SLES 15 | Kernel parameters, saptune configuration |
+| 2772999 | RHEL 8.x: Installation and Configuration | RHEL 8 specific settings |
+| 3108316 | RHEL 9.x: Installation and Configuration | RHEL 9 specific settings |
 
 ## Usage
 
@@ -166,28 +169,69 @@ module "hana_worker" {
 | Size | Memory (GB) | vCPUs | Data Disks | Log Disks | Use Case |
 |------|-------------|-------|------------|-----------|----------|
 | XS   | 64          | 8     | 2          | 2         | Development, Sandbox |
-| S    | 128         | 16    | 3          | 2         | Small Production, QA |
-| M    | 256         | 32    | 4          | 3         | Medium Production |
-| L    | 512         | 64    | 4          | 3         | Large Production |
-| XL   | 1024        | 96    | 6          | 4         | Very Large Production |
+| S    | 128         | 16    | 2          | 2         | Small Production, QA |
+| M    | 256         | 32    | 4          | 4         | Medium Production |
+| L    | 512         | 64    | 4          | 4         | Large Production |
+| XL   | 1024        | 96    | 4          | 4         | Very Large Production |
 
 ## Storage Layout
 
-The module automatically calculates storage sizes based on SAP Note 2205917:
+The module automatically calculates storage sizes based on SAP Note 1900823 and provisions disks that will be configured with **LVM (Logical Volume Manager)** post-deployment:
 
-- **OS Disk**: 100 GB (default, configurable)
-- **/hana/data**: 1x RAM, striped across multiple disks
-- **/hana/log**: 0.5x RAM, striped across multiple disks
-- **/hana/shared**: 1x RAM
+- **OS Disk**: 100 GB (default, configurable) - Separate disk, not part of data VGs
+- **/hana/data**: 1.5x RAM, LVM striped across multiple disks (VG: hanadata)
+- **/hana/log**: 0.5x RAM (systems ≤512GB) or min 512GB (systems >512GB), LVM striped (VG: hanalog)
+- **/hana/shared**: MIN(1x RAM, 1TB) for single-node (VG: hanashared)
 - **/hana/backup**: 2x RAM (optional, enabled by default)
 
-### Example for 256 GB System:
-- OS: 100 GB
-- Data: 4 x 64 GB = 256 GB (striped for performance)
-- Log: 3 x 43 GB = 129 GB (>0.5x RAM)
-- Shared: 256 GB
-- Backup: 512 GB
-- **Total: 1,253 GB**
+### LVM Configuration
+
+**Important**: Terraform provisions the disks, but LVM configuration must be done post-deployment using cloud-init or Ansible:
+
+```bash
+# Volume Groups (VG)
+hanadata   - Data volume group
+hanalog    - Log volume group  
+hanashared - Shared volume group
+
+# LVM Striping Parameters
+Stripe Size:  1MB (-I1M)
+Stripe Count: Matches disk count in VG (-i <count>)
+Capacity:     100% of VG (-l 100%FREE)
+
+# XFS Mount Options
+inode64,largeio,swalloc
+```
+
+See [LVM_STORAGE_CONFIGURATION.md](../../docs/operations/LVM_STORAGE_CONFIGURATION.md) for complete LVM setup instructions.
+
+### Example for 256 GB System (9 data disks):
+```
+Total Disks: 10 (1 OS + 9 data)
+
+OS:          1 disk  × 100 GB = 100 GB (separate, not in VG)
+/hana/data:  4 disks × 96 GB  = 384 GB total (VG: hanadata, 4-way LVM stripe)
+/hana/log:   4 disks × 32 GB  = 128 GB total (VG: hanalog, 4-way LVM stripe)
+/hana/shared:1 disk  × 256 GB = 256 GB total (VG: hanashared, no stripe)
+/hana/backup:1 disk  × 512 GB = 512 GB total (optional)
+
+Total Storage: 1,380 GB
+```
+
+### Example for 1024 GB System (12 data disks):
+```
+Total Disks: 13 (1 OS + 12 data)
+
+OS:          1 disk  × 100 GB  = 100 GB (separate, not in VG)
+/hana/data:  4 disks × 384 GB  = 1,536 GB total (VG: hanadata, 4-way LVM stripe)
+/hana/log:   4 disks × 128 GB  = 512 GB total (VG: hanalog, 4-way LVM stripe)
+/hana/shared:4 disks × 256 GB  = 1,024 GB total (VG: hanashared, 4-way LVM stripe)
+/hana/backup:1 disk  × 2048 GB = 2,048 GB total (optional)
+
+Total Storage: 5,220 GB
+```
+
+**Note**: No RAID configuration is used. Nutanix provides data protection (RF2/RF3) at the storage layer. LVM striping provides performance optimization.
 
 ## CPU and NUMA Configuration
 
@@ -287,11 +331,83 @@ See [outputs.tf](./outputs.tf) for complete output documentation.
 4. **Use static IPs** for production databases
 5. **Configure protection policies** for automated backups
 6. **Use categories** for organization and automation
-7. **Test in non-production** before production deployment
+7. **Configure LVM storage** post-deployment (always required) - See [LVM Storage Guide](../../docs/operations/LVM_STORAGE_CONFIGURATION.md)
+8. **Configure vNUMA and CPU pinning** post-deployment (required for production) - See [CPU Config Guide](../../docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md)
+9. **Disable Hyper-Threading** for SAP HANA (num_threads_per_core=1)
+10. **Use XFS filesystem** with mount options: inode64,largeio,swalloc
+11. **Separate OS disk** from data disks - Never include OS disk in HANA volume groups
+12. **Test in non-production** before production deployment
+
+## Post-Deployment Configuration
+
+**IMPORTANT**: After Terraform provisions the VM and disks, you must complete two critical configuration steps:
+
+### 1. LVM Storage Configuration (Required)
+
+Configure LVM volume groups and logical volumes for SAP HANA storage:
+
+```bash
+# Example for 9-disk configuration (4 data + 4 log + 1 shared)
+# Exclude OS disk (typically /dev/sda)
+
+# Create physical volumes
+pvcreate /dev/sdb /dev/sdc /dev/sdd /dev/sde    # Data disks
+pvcreate /dev/sdf /dev/sdg /dev/sdh /dev/sdi    # Log disks
+pvcreate /dev/sdj                                # Shared disk
+
+# Create volume groups
+vgcreate hanadata /dev/sdb /dev/sdc /dev/sdd /dev/sde
+vgcreate hanalog /dev/sdf /dev/sdg /dev/sdh /dev/sdi
+vgcreate hanashared /dev/sdj
+
+# Create logical volumes with LVM striping (1MB stripe size)
+lvcreate -i 4 -I1M -l 100%FREE -r none -n vol hanadata
+lvcreate -i 4 -I1M -l 100%FREE -r none -n vol hanalog
+lvcreate -l 100%FREE -r none -n vol hanashared
+
+# Format with XFS
+mkfs.xfs /dev/mapper/hanadata-vol
+mkfs.xfs /dev/mapper/hanalog-vol
+mkfs.xfs /dev/mapper/hanashared-vol
+
+# Create mount points
+mkdir -p /hana/{data,log,shared}
+
+# Add to /etc/fstab
+echo "/dev/mapper/hanadata-vol /hana/data xfs inode64,largeio,swalloc 1 2" >> /etc/fstab
+echo "/dev/mapper/hanalog-vol /hana/log xfs inode64,largeio,swalloc 1 2" >> /etc/fstab
+echo "/dev/mapper/hanashared-vol /hana/shared xfs inode64,largeio,swalloc 1 2" >> /etc/fstab
+
+# Mount all
+mount -a
+```
+
+See [LVM_STORAGE_CONFIGURATION.md](../../docs/operations/LVM_STORAGE_CONFIGURATION.md) for detailed instructions, automation examples, and troubleshooting.
+
+### 2. CPU Configuration (Required for Production)
+
+Configure vNUMA, CPU pinning, and disable Hyper-Threading:
+
+```bash
+acli vm.update <vm_name> \
+  num_vcpus=2 \
+  num_vnuma_nodes=2 \
+  num_cores_per_vcpu=32 \
+  vcpu_hard_pin=True \
+  num_threads_per_core=1
+```
+
+See [POST_DEPLOYMENT_CPU_CONFIG.md](../../docs/operations/POST_DEPLOYMENT_CPU_CONFIG.md) for detailed CPU configuration instructions.
 
 ## References
 
-- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799) - SAP HANA on Nutanix
-- [SAP Note 2205917](https://launchpad.support.sap.com/#/notes/2205917) - Storage Requirements
+- [SAP Sizing Guidelines](https://www.sap.com/about/benchmark/sizing.sizing-guidelines.html) - Official SAP Sizing
+- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799) - SLES OS Installation
+- [SAP Note 1900823](https://launchpad.support.sap.com/#/notes/1900823) - Storage Connector API
+- [SAP Note 2686722](https://launchpad.support.sap.com/#/notes/2686722) - HANA on Nutanix AOS
+- [SAP Note 2205917](https://launchpad.support.sap.com/#/notes/2205917) - OS Settings for SLES 12
+- [SAP Note 2684254](https://me.sap.com/notes/2684254) - OS Settings for SLES 15
+- [SAP Note 2772999](https://launchpad.support.sap.com/#/notes/2772999) - RHEL 8.x Installation
+- [SAP Note 3108316](https://launchpad.support.sap.com/#/notes/3108316) - RHEL 9.x Installation
 - [Nutanix SAP HANA Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
 
