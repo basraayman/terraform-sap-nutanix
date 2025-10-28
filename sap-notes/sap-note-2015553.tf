@@ -218,36 +218,26 @@ locals {
 # Cloud-Init Template for SAP Note 2015553
 # ============================================================================
 
-locals {
-  sap_note_2015553_cloud_init = {
-    # Kernel parameters for sysctl
-    sysctl_config = merge(
-      local.sap_note_2015553.kernel_parameters,
-      var.enable_hana_tuning ? local.sap_note_2015553.hana_kernel_parameters : {}
-    )
-    
-    # Package list based on OS
-    packages = concat(
-      local.sap_note_2015553.os_requirements.required_packages,
-      var.os_type == "sles" ? local.sap_note_2015553.os_requirements.sles_packages : [],
-      var.os_type == "rhel" ? local.sap_note_2015553.os_requirements.rhel_packages : []
-    )
-  }
-}
-
 # ============================================================================
-# Validation
+# Example Usage (Reference Only)
 # ============================================================================
-
-locals {
-  validate_2015553 = {
-    # Validate hostname length
-    hostname_valid = length(var.vm_name) <= local.sap_note_2015553.hostname.max_length
-    
-    # Validate hostname characters
-    hostname_chars_valid = can(regex("^${local.sap_note_2015553.hostname.valid_chars}+$", var.vm_name))
-  }
-}
+#
+# To use these configurations in your cloud-init, reference them like this:
+#
+# locals {
+#   sysctl_config = local.sap_note_2015553.kernel_parameters
+#   
+#   packages = concat(
+#     local.sap_note_2015553.os_requirements.required_packages,
+#     local.sap_note_2015553.os_requirements.sles_packages  # or rhel_packages
+#   )
+# }
+#
+# # Example validation
+# validation {
+#   condition     = length(var.vm_name) <= 13
+#   error_message = "Per SAP Note 2015553, hostname must be <= 13 characters"
+# }
 
 # ============================================================================
 # Outputs

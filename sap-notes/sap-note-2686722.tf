@@ -232,18 +232,21 @@ locals {
 # Validation
 # ============================================================================
 
-locals {
-  validate_2686722 = {
-    # Memory must be >= 64 GB
-    memory_sufficient = var.memory_gb >= local.sap_note_2686722.supported_configs.min_memory_gb
-    
-    # vCPUs must be >= 4
-    vcpu_sufficient = var.num_vcpus >= local.sap_note_2686722.supported_configs.min_vcpus
-    
-    # Check NUMA requirement
-    numa_required = var.memory_gb > local.sap_note_2686722.virtualization.cpu.numa_required_above_gb
-  }
-}
+# ============================================================================
+# Example Validation (Reference Only)
+# ============================================================================
+#
+# To use validations in your modules:
+#
+# validation {
+#   condition     = var.memory_gb >= 64
+#   error_message = "Per SAP Note 2686722, memory must be >= 64GB for HANA on Nutanix"
+# }
+#
+# validation {
+#   condition     = var.num_vcpus >= 4
+#   error_message = "Per SAP Note 2686722, minimum 4 vCPUs required"
+# }
 
 # ============================================================================
 # Outputs
@@ -252,19 +255,10 @@ locals {
 output "sap_note_2686722_info" {
   description = "SAP Note 2686722 virtualization requirements"
   value = {
-    note_number = local.sap_note_2686722.note_number
-    title       = local.sap_note_2686722.title
-    
+    note_number              = local.sap_note_2686722.note_number
+    title                    = local.sap_note_2686722.title
     post_deployment_required = true
     post_deployment_note     = local.post_deployment_notes.note
-    
-    numa_required = local.validate_2686722.numa_required
-    
-    recommended_numa_config = local.validate_2686722.numa_required ? (
-      var.memory_gb <= 512 ? 
-        local.sap_note_2686722.acli_configuration.numa_recommendations["257-512"] :
-        local.sap_note_2686722.acli_configuration.numa_recommendations["513-1024"]
-    ) : null
   }
 }
 

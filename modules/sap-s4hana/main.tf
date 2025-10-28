@@ -34,12 +34,14 @@ locals {
   hana_vm_name    = local.is_converged ? "${var.sap_sid}-converged" : "${var.sap_sid}-db"
   
   # Calculate total VMs
-  total_vms = (local.is_distributed ? 1 : 0) + # HANA DB (distributed only)
-              (var.deploy_ascs ? 1 : 0) +      # ASCS
-              (var.deploy_ers ? 1 : 0) +       # ERS
-              1 +                               # PAS (always)
-              length(var.additional_app_servers) + # AAS
-              (var.deploy_web_dispatcher ? 1 : 0)  # Web Dispatcher
+  total_vms = (
+    (local.is_distributed ? 1 : 0) +           # HANA DB (distributed only)
+    (var.deploy_ascs ? 1 : 0) +                # ASCS
+    (var.deploy_ers ? 1 : 0) +                 # ERS
+    1 +                                         # PAS (always)
+    length(var.additional_app_servers) +       # AAS
+    (var.deploy_web_dispatcher ? 1 : 0)        # Web Dispatcher
+  )
 
   # Common tags
   common_tags = merge(

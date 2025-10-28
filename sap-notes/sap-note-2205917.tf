@@ -25,7 +25,19 @@ locals {
     os_packages = {
       required = [
         "saptune",
-        "sapconf",
+        "sapconf"
+      ]
+    }
+    
+    # ========================================================================
+    # Storage Configuration per SAP Note 2205917
+    # ========================================================================
+    storage_configuration = {
+      # /hana/data - Database files
+      data = {
+        min_size_ratio_to_ram = 1.0    # Minimum 1x RAM
+        rec_size_ratio_to_ram = 1.5    # Recommended 1.5x RAM for performance
+        max_size_ratio_to_ram = 2.0    # Can be larger for large datasets
         
         # Disk configuration
         min_disks             = 1
@@ -276,75 +288,45 @@ locals {
 # Storage Calculation Functions
 # ============================================================================
 
-locals {
-  # Calculate storage sizes based on memory
-  calculate_storage = {
-    # Input memory in GB
-    memory_gb = var.memory_gb
-    
-    # Calculate data volume size
-    data_volume_gb = ceil(local.calculate_storage.memory_gb * 
-                         local.sap_note_2205917.volumes.data.rec_size_ratio_to_ram)
-    
-    # Calculate log volume size
-    log_volume_gb = ceil(local.calculate_storage.memory_gb * 
-                        local.sap_note_2205917.volumes.log.rec_size_ratio_to_ram)
-    
-    # Calculate shared volume size
-    shared_volume_gb = ceil(local.calculate_storage.memory_gb * 
-                           local.sap_note_2205917.volumes.shared.rec_size_ratio_to_ram)
-    
-    # Calculate backup volume size
-    backup_volume_gb = ceil(local.calculate_storage.memory_gb * 
-                           local.sap_note_2205917.volumes.backup.rec_size_ratio_to_ram)
-    
-    # Total storage required
-    total_storage_gb = local.calculate_storage.data_volume_gb + 
-                       local.calculate_storage.log_volume_gb + 
-                       local.calculate_storage.shared_volume_gb + 
-                       local.calculate_storage.backup_volume_gb +
-                       local.sap_note_2205917.volumes.root.rec_size_gb
-  }
-  
-  # Determine layout based on memory size
-  storage_layout = (
-    var.memory_gb <= 256 ? local.sap_note_2205917.layouts.small :
-    var.memory_gb <= 512 ? local.sap_note_2205917.layouts.medium :
-    local.sap_note_2205917.layouts.large
-  )
-}
-
 # ============================================================================
-# Validation
+# Example Usage (Reference Only)
 # ============================================================================
-
-locals {
-  validate_storage = {
-    # Ensure data volume meets minimum
-    data_meets_minimum = var.data_disk_size_gb * var.data_disk_count >= 
-                        (var.memory_gb * local.sap_note_2205917.volumes.data.min_size_ratio_to_ram)
-    
-    # Ensure log volume meets minimum
-    log_meets_minimum = var.log_disk_size_gb * var.log_disk_count >= 
-                       (var.memory_gb * local.sap_note_2205917.volumes.log.min_size_ratio_to_ram)
-    
-    # Ensure proper disk count for striping
-    data_disk_count_ok = var.data_disk_count >= local.sap_note_2205917.volumes.data.recommended_disks
-    log_disk_count_ok  = var.log_disk_count >= local.sap_note_2205917.volumes.log.recommended_disks
-  }
-}
+#
+# To use these configurations in your modules, reference them like this:
+#
+# locals {
+#   # Calculate storage sizes based on memory
+#   data_volume_gb = ceil(var.memory_gb * local.sap_note_2205917.storage_configuration.data.rec_size_ratio_to_ram)
+#   log_volume_gb  = ceil(var.memory_gb * local.sap_note_2205917.storage_configuration.log.rec_size_ratio_to_ram)
+#   
+#   # Determine layout based on memory size
+#   storage_layout = (
+#     var.memory_gb <= 256 ? local.sap_note_2205917.layouts.small :
+#     var.memory_gb <= 512 ? local.sap_note_2205917.layouts.medium :
+#     local.sap_note_2205917.layouts.large
+#   )
+# }
+#
+# ============================================================================
+# Example Validation (Reference Only)
+# ============================================================================
+#
+# validation {
+#   condition     = var.data_disk_size_gb * var.data_disk_count >= (var.memory_gb * 1.0)
+#   error_message = "Per SAP Note 2205917, total data disk size must be >= RAM size"
+# }
 
 # ============================================================================
 # Outputs for Reference
 # ============================================================================
 
 output "sap_note_2205917_info" {
-  description = "SAP Note 2205917 storage recommendations"
+  description = "SAP Note 2205917 configuration reference"
   value = {
-    note_number           = local.sap_note_2205917.note_number
-    title                 = local.sap_note_2205917.title
-    calculated_sizes      = local.calculate_storage
-    recommended_layout    = local.storage_layout
+    note_number = local.sap_note_2205917.note_number
+    title       = local.sap_note_2205917.title
+    version     = local.sap_note_2205917.version
+    applies_to  = local.sap_note_2205917.applies_to
   }
 }
 

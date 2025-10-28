@@ -28,8 +28,8 @@ terraform {
 # ============================================================================
 
 data "nutanix_cluster" "cluster" {
-  count        = var.cluster_uuid == "" ? 1 : 0
-  cluster_name = var.cluster_name
+  count = var.cluster_uuid == "" ? 1 : 0
+  name  = var.cluster_name
 }
 
 data "nutanix_image" "os_image" {
@@ -140,14 +140,14 @@ resource "nutanix_virtual_machine" "sap_netweaver" {
 
   # Boot/OS Disk (from image)
   disk_list {
-    data_source_reference {
+    data_source_reference = {
       kind = "image"
       uuid = data.nutanix_image.os_image.id
     }
     disk_size_mib = var.os_disk_size_gb * local.gb_to_mib
     device_properties {
-      device_type = "DISK"
-      disk_address {
+      device_type  = "DISK"
+      disk_address = {
         device_index = 0
         adapter_type = "SCSI"
       }
@@ -158,8 +158,8 @@ resource "nutanix_virtual_machine" "sap_netweaver" {
   disk_list {
     disk_size_mib = var.usrsap_disk_size_gb * local.gb_to_mib
     device_properties {
-      device_type = "DISK"
-      disk_address {
+      device_type  = "DISK"
+      disk_address = {
         device_index = 1
         adapter_type = "SCSI"
       }
@@ -172,8 +172,8 @@ resource "nutanix_virtual_machine" "sap_netweaver" {
     content {
       disk_size_mib = var.sapmnt_disk_size_gb * local.gb_to_mib
       device_properties {
-        device_type = "DISK"
-        disk_address {
+        device_type  = "DISK"
+        disk_address = {
           device_index = 2
           adapter_type = "SCSI"
         }
@@ -187,8 +187,8 @@ resource "nutanix_virtual_machine" "sap_netweaver" {
     content {
       disk_size_mib = disk_list.value.size_gb * local.gb_to_mib
       device_properties {
-        device_type = "DISK"
-        disk_address {
+        device_type  = "DISK"
+        disk_address = {
           device_index = disk_list.value.device_index
           adapter_type = "SCSI"
         }

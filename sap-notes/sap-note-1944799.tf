@@ -188,31 +188,20 @@ locals {
 }
 
 # ============================================================================
-# Validation Functions
+# Example Validation (Reference Only)
 # ============================================================================
-
-locals {
-  # Validate CPU configuration
-  validate_cpu = {
-    is_valid_vcpu_count = var.num_vcpus >= local.sap_note_1944799.cpu.min_vcpus_oltp && 
-                          var.num_vcpus <= local.sap_note_1944799.cpu.max_vcpus
-    
-    vcpu_memory_ratio = var.memory_gb / var.num_vcpus
-    
-    is_valid_ratio = local.validate_cpu.vcpu_memory_ratio >= local.sap_note_1944799.cpu.vcpu_to_memory_ratio_min &&
-                     local.validate_cpu.vcpu_memory_ratio <= local.sap_note_1944799.cpu.vcpu_to_memory_ratio_max
-  }
-  
-  # Validate memory configuration
-  validate_memory = {
-    is_valid_size = var.memory_gb >= local.sap_note_1944799.memory.min_memory_gb &&
-                    var.memory_gb <= local.sap_note_1944799.memory.max_memory_gb
-    
-    requires_numa = var.memory_gb > local.sap_note_1944799.memory.numa_threshold_gb
-    
-    recommended_sockets = local.validate_memory.requires_numa ? 2 : 1
-  }
-}
+#
+# To use validations in your modules, add them like this:
+#
+# validation {
+#   condition     = var.num_vcpus >= 8 && var.num_vcpus <= 384
+#   error_message = "Per SAP Note 1944799, vCPU count must be between 8 and 384"
+# }
+#
+# validation {
+#   condition     = var.memory_gb >= 64 && var.memory_gb <= 6144
+#   error_message = "Per SAP Note 1944799, memory must be between 64GB and 6144GB"
+# }
 
 # ============================================================================
 # Outputs for Reference

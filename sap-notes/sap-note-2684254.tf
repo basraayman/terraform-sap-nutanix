@@ -208,18 +208,16 @@ locals {
 # Validation
 # ============================================================================
 
-locals {
-  validate_sles15 = {
-    # Verify OS type is SLES 15
-    is_sles15 = can(regex("SLES.*15", var.os_image_name))
-    
-    # Verify saptune package is configured
-    has_saptune = contains(
-      var.cloud_init_config != null ? var.cloud_init_config.additional_packages : [],
-      "saptune"
-    )
-  }
-}
+# ============================================================================
+# Example Validation (Reference Only)
+# ============================================================================
+#
+# To use validations in your modules:
+#
+# validation {
+#   condition     = can(regex("SLES.*15", var.os_image_name))
+#   error_message = "Per SAP Note 2684254, OS must be SLES 15"
+# }
 
 # ============================================================================
 # Outputs

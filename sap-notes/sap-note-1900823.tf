@@ -288,64 +288,34 @@ locals {
 }
 
 # ============================================================================
-# Storage Calculation Helper Functions
+# Example Usage (Reference Only)
 # ============================================================================
-
-locals {
-  # Calculate data volume size
-  calculate_data_size = {
-    ram_gb  = var.memory_gb
-    data_gb = var.memory_gb * local.sap_note_1900823.storage_formulas.data.size_ratio_to_ram
-  }
-  
-  # Calculate log volume size with threshold logic
-  calculate_log_size = {
-    ram_gb = var.memory_gb
-    log_gb = var.memory_gb <= local.sap_note_1900823.storage_formulas.log.small_systems.threshold_gb ? (
-      var.memory_gb * local.sap_note_1900823.storage_formulas.log.small_systems.size_ratio_to_ram
-    ) : (
-      local.sap_note_1900823.storage_formulas.log.large_systems.minimum_size_gb
-    )
-  }
-  
-  # Calculate shared volume size (single-node)
-  calculate_shared_size_single = {
-    ram_gb    = var.memory_gb
-    shared_gb = min(
-      var.memory_gb * local.sap_note_1900823.storage_formulas.shared_single_node.size_ratio_to_ram,
-      local.sap_note_1900823.storage_formulas.shared_single_node.maximum_size_gb
-    )
-  }
-  
-  # Calculate shared volume size (scale-out)
-  calculate_shared_size_scaleout = {
-    ram_per_worker_gb = var.memory_gb
-    worker_count      = var.worker_count
-    increments        = ceil(var.worker_count / local.sap_note_1900823.storage_formulas.shared_scale_out.workers_per_increment)
-    shared_gb         = local.calculate_shared_size_scaleout.increments * var.memory_gb
-  }
-}
-
-# ============================================================================
-# Validation Rules
-# ============================================================================
-
-locals {
-  validate_storage_1900823 = {
-    # Data must be at least 1.5x RAM
-    data_size_valid = (var.data_disk_size_gb * var.data_disk_count) >= (
-      var.memory_gb * local.sap_note_1900823.storage_formulas.data.size_ratio_to_ram
-    )
-    
-    # Log must meet minimum requirements
-    log_size_valid = (var.log_disk_size_gb * var.log_disk_count) >= (
-      var.memory_gb <= 512 ? (var.memory_gb * 0.5) : 512
-    )
-    
-    # Shared must not exceed 1TB for single-node
-    shared_size_valid = var.shared_disk_size_gb <= local.sap_note_1900823.storage_formulas.shared_single_node.maximum_size_gb
-  }
-}
+#
+# To use these storage formulas in your modules, reference them like this:
+#
+# locals {
+#   # Calculate data volume size
+#   data_gb = var.memory_gb * local.sap_note_1900823.storage_formulas.data.size_ratio_to_ram
+#   
+#   # Calculate log volume size with threshold logic
+#   log_gb = var.memory_gb <= 512 ? (
+#     var.memory_gb * 0.5
+#   ) : (
+#     512  # Minimum 512GB for large systems
+#   )
+#   
+#   # Calculate shared volume size (single-node)
+#   shared_gb = min(
+#     var.memory_gb * 1.0,  # 1x RAM
+#     1024                  # Maximum 1TB
+#   )
+# }
+#
+# # Example validation
+# validation {
+#   condition     = (var.data_disk_size_gb * var.data_disk_count) >= (var.memory_gb * 1.5)
+#   error_message = "Per SAP Note 1900823, total data disk size must be >= 1.5x RAM"
+# }
 
 # ============================================================================
 # Outputs
@@ -354,12 +324,11 @@ locals {
 output "sap_note_1900823_info" {
   description = "SAP Note 1900823 storage sizing information"
   value = {
-    note_number      = local.sap_note_1900823.note_number
-    title            = local.sap_note_1900823.title
-    data_formula     = "1.5 x RAM"
-    log_formula      = "0.5 x RAM (≤512GB) or min 512GB (>512GB)"
-    shared_formula   = "MIN(1 x RAM, 1TB) for single-node"
-    calculated_sizes = local.calculate_data_size
+    note_number    = local.sap_note_1900823.note_number
+    title          = local.sap_note_1900823.title
+    data_formula   = "1.5 x RAM"
+    log_formula    = "0.5 x RAM (≤512GB) or min 512GB (>512GB)"
+    shared_formula = "MIN(1 x RAM, 1TB) for single-node"
   }
 }
 

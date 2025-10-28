@@ -55,11 +55,13 @@ output "storage_configuration" {
     log_disk_gb    = local.log_disk_size_gb
     shared_disk_gb = local.shared_disk_size_gb
     backup_disk_gb = var.enable_backup_disk ? local.backup_disk_size_gb : 0
-    total_storage_gb = var.os_disk_size_gb + 
-                       (local.actual_data_disks * local.data_disk_size_gb) +
-                       (local.actual_log_disks * local.log_disk_size_gb) +
-                       local.shared_disk_size_gb +
-                       (var.enable_backup_disk ? local.backup_disk_size_gb : 0)
+    total_storage_gb = (
+      var.os_disk_size_gb +
+      (local.actual_data_disks * local.data_disk_size_gb) +
+      (local.actual_log_disks * local.log_disk_size_gb) +
+      local.shared_disk_size_gb +
+      (var.enable_backup_disk ? local.backup_disk_size_gb : 0)
+    )
   }
 }
 

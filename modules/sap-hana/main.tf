@@ -27,8 +27,8 @@ terraform {
 # ============================================================================
 
 data "nutanix_cluster" "cluster" {
-  count        = var.cluster_uuid == "" ? 1 : 0
-  cluster_name = var.cluster_name
+  count = var.cluster_uuid == "" ? 1 : 0
+  name  = var.cluster_name
 }
 
 data "nutanix_image" "os_image" {
@@ -134,14 +134,14 @@ resource "nutanix_virtual_machine" "sap_hana" {
 
   # Boot/OS Disk (from image)
   disk_list {
-    data_source_reference {
+    data_source_reference = {
       kind = "image"
       uuid = data.nutanix_image.os_image.id
     }
     disk_size_mib = var.os_disk_size_gb * local.gb_to_mib
     device_properties {
-      device_type = "DISK"
-      disk_address {
+      device_type  = "DISK"
+      disk_address = {
         device_index = 0
         adapter_type = "SCSI"
       }
@@ -154,8 +154,8 @@ resource "nutanix_virtual_machine" "sap_hana" {
     content {
       disk_size_mib = local.data_disk_size_gb * local.gb_to_mib
       device_properties {
-        device_type = "DISK"
-        disk_address {
+        device_type  = "DISK"
+        disk_address = {
           device_index = disk_list.value + 1
           adapter_type = "SCSI"
         }
@@ -169,8 +169,8 @@ resource "nutanix_virtual_machine" "sap_hana" {
     content {
       disk_size_mib = local.log_disk_size_gb * local.gb_to_mib
       device_properties {
-        device_type = "DISK"
-        disk_address {
+        device_type  = "DISK"
+        disk_address = {
           device_index = disk_list.value + 1 + local.actual_data_disks
           adapter_type = "SCSI"
         }
@@ -182,8 +182,8 @@ resource "nutanix_virtual_machine" "sap_hana" {
   disk_list {
     disk_size_mib = local.shared_disk_size_gb * local.gb_to_mib
     device_properties {
-      device_type = "DISK"
-      disk_address {
+      device_type  = "DISK"
+      disk_address = {
         device_index = 1 + local.actual_data_disks + local.actual_log_disks
         adapter_type = "SCSI"
       }
@@ -196,8 +196,8 @@ resource "nutanix_virtual_machine" "sap_hana" {
     content {
       disk_size_mib = local.backup_disk_size_gb * local.gb_to_mib
       device_properties {
-        device_type = "DISK"
-        disk_address {
+        device_type  = "DISK"
+        disk_address = {
           device_index = 2 + local.actual_data_disks + local.actual_log_disks
           adapter_type = "SCSI"
         }
@@ -268,9 +268,6 @@ resource "nutanix_virtual_machine" "sap_hana" {
   # Hardware Optimizations for SAP HANA
   # ============================================================================
 
-  # Enable memory hot add (useful for scaling)
-  enable_memory_hotplug = var.enable_memory_hotplug
-
   # NUMA configuration - implicit through socket configuration
   # Nutanix automatically optimizes NUMA for SAP workloads
 
@@ -291,10 +288,9 @@ resource "nutanix_protection_rule" "hana_backup" {
   name        = "${var.vm_name}-backup-rule"
   description = "Backup policy for SAP HANA ${var.hana_sid}"
 
-  categories_filter {
-    type   = "CATEGORIES_MATCH_ANY"
+  category_filter {
+    type      = "CATEGORIES_MATCH_ANY"
     kind_list = ["vm"]
-    
     params {
       name   = "SAP_SID"
       values = [var.hana_sid]
