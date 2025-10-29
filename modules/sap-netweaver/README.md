@@ -340,7 +340,7 @@ See [outputs.tf](./outputs.tf) for complete output documentation.
 
 ## References
 
-- [SAP Note 1928533](https://launchpad.support.sap.com/#/notes/1928533) - SAP Applications on Linux
-- [SAP Note 2015553](https://launchpad.support.sap.com/#/notes/2015553) - SAP on Linux Prerequisites
+- [SAP Note 1928533](https://me.sap.com/notes/1928533) - SAP Applications on Linux
+- [SAP Note 2015553](https://me.sap.com/notes/2015553) - SAP on Linux Prerequisites
 - [SAP Installation Guides](https://help.sap.com/docs/SAP_NETWEAVER)
 

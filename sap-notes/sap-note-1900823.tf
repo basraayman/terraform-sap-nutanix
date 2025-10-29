@@ -5,7 +5,7 @@
 # This file contains storage sizing calculations from SAP Note 1900823
 # which defines the official storage requirements for SAP HANA.
 #
-# Link: https://launchpad.support.sap.com/#/notes/1900823
+# Link: https://me.sap.com/notes/1900823
 #
 # ============================================================================
 

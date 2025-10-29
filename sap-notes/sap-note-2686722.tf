@@ -5,7 +5,7 @@
 # This file contains configuration guidelines from SAP Note 2686722
 # for running SAP HANA virtualized on Nutanix AOS.
 #
-# Link: https://launchpad.support.sap.com/#/notes/2686722
+# Link: https://me.sap.com/notes/2686722
 #
 # ============================================================================
 

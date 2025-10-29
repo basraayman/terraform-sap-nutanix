@@ -5,7 +5,7 @@
 # This file contains OS configuration recommendations from SAP Note 2205917
 # for SLES 12 / SLES for SAP Applications 12.
 #
-# Link: https://launchpad.support.sap.com/#/notes/2205917
+# Link: https://me.sap.com/notes/2205917
 #
 # Note: For SLES 15, see SAP Note 2684254
 # Note: For storage sizing, see SAP Note 1900823

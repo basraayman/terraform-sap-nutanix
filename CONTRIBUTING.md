@@ -121,7 +121,7 @@ terraform-sap-nutanix/
    # SAP Note XXXXXX - Title
    # ============================================================================
    #
-   # Link: https://launchpad.support.sap.com/#/notes/XXXXXX
+   # Link: https://me.sap.com/notes/XXXXXX
    # ============================================================================
    
    locals {
@@ -362,7 +362,7 @@ Describe testing performed
 
 - [Terraform Style Guide](https://www.terraform.io/docs/language/syntax/style.html)
 - [Nutanix Provider Documentation](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs)
-- [SAP Notes](https://launchpad.support.sap.com)
+- [SAP Notes](https://me.sap.com)
 - [Nutanix SAP Documentation](https://portal.nutanix.com/page/documents/list?type=software&filterKey=software&filterVal=SAP)
 
 ## Questions?

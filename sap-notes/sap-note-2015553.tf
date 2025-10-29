@@ -5,7 +5,7 @@
 # This file contains OS-level requirements from SAP Note 2015553
 # which defines general prerequisites for SAP on Linux systems.
 #
-# Link: https://launchpad.support.sap.com/#/notes/2015553
+# Link: https://me.sap.com/notes/2015553
 #
 # ============================================================================
 

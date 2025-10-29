@@ -360,7 +360,7 @@ Before going to production:
 
 - [Nutanix Provider Docs](https://registry.terraform.io/providers/nutanix/nutanix/latest/docs)
 - [SAP on Nutanix Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
-- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799)
+- [SAP Note 1944799](https://me.sap.com/notes/1944799)
 - [Terraform Best Practices](https://www.terraform.io/docs/language/index.html)
 
 ---

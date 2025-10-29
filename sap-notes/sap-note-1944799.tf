@@ -6,7 +6,7 @@
 # which defines the requirements and guidelines for running SAP HANA on
 # Nutanix infrastructure.
 #
-# Link: https://launchpad.support.sap.com/#/notes/1944799
+# Link: https://me.sap.com/notes/1944799
 #
 # ============================================================================
 

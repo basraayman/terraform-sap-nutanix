@@ -21,28 +21,28 @@ Each SAP note has its own `.tf` file containing:
 
 | SAP Note | Title | Module | Status |
 |----------|-------|--------|--------|
-| [1944799](https://launchpad.support.sap.com/#/notes/1944799) | SAP HANA Guidelines for SLES Operating System Installation | `sap-hana` | Implemented |
-| [1900823](https://launchpad.support.sap.com/#/notes/1900823) | SAP HANA Storage Connector API | `sap-hana` | Implemented |
-| [2686722](https://launchpad.support.sap.com/#/notes/2686722) | SAP HANA virtualized on Nutanix AOS | `sap-hana` | Implemented |
-| [2205917](https://launchpad.support.sap.com/#/notes/2205917) | SAP HANA: OS Settings for SLES 12 | All | Implemented |
+| [1944799](https://me.sap.com/notes/1944799) | SAP HANA Guidelines for SLES Operating System Installation | `sap-hana` | Implemented |
+| [1900823](https://me.sap.com/notes/1900823) | SAP HANA Storage Connector API | `sap-hana` | Implemented |
+| [2686722](https://me.sap.com/notes/2686722) | SAP HANA virtualized on Nutanix AOS | `sap-hana` | Implemented |
+| [2205917](https://me.sap.com/notes/2205917) | SAP HANA: OS Settings for SLES 12 | All | Implemented |
 | [2684254](https://me.sap.com/notes/2684254) | SAP HANA: OS Settings for SLES 15 | All | Implemented |
-| [2772999](https://launchpad.support.sap.com/#/notes/2772999) | Red Hat Enterprise Linux 8.x: Installation and Configuration | All | Implemented |
-| [3108316](https://launchpad.support.sap.com/#/notes/3108316) | Red Hat Enterprise Linux 9.x: Installation and Configuration | All | Implemented |
+| [2772999](https://me.sap.com/notes/2772999) | Red Hat Enterprise Linux 8.x: Installation and Configuration | All | Implemented |
+| [3108316](https://me.sap.com/notes/3108316) | Red Hat Enterprise Linux 9.x: Installation and Configuration | All | Implemented |
 
 ### OS-Specific Notes
 
 | SAP Note | Title | OS | Status |
 |----------|-------|-------|--------|
-| [2382421](https://launchpad.support.sap.com/#/notes/2382421) | Optimizing Linux with tuned | RHEL/SLES | Implemented |
-| [2777782](https://launchpad.support.sap.com/#/notes/2777782) | SAP HANA on RHEL 8.x | RHEL 8 | Implemented |
-| [2205917](https://launchpad.support.sap.com/#/notes/2205917) | SAP HANA on SLES 15 | SLES 15 | Implemented |
+| [2382421](https://me.sap.com/notes/2382421) | Optimizing Linux with tuned | RHEL/SLES | Implemented |
+| [2777782](https://me.sap.com/notes/2777782) | SAP HANA on RHEL 8.x | RHEL 8 | Implemented |
+| [2205917](https://me.sap.com/notes/2205917) | SAP HANA on SLES 15 | SLES 15 | Implemented |
 
 ### Networking Notes
 
 | SAP Note | Title | Status |
 |----------|-------|--------|
-| [2081065](https://launchpad.support.sap.com/#/notes/2081065) | Jumbo Frames in HANA Environments | Reference |
-| [2100040](https://launchpad.support.sap.com/#/notes/2100040) | FAQ: Network and Connectivity | Reference |
+| [2081065](https://me.sap.com/notes/2081065) | Jumbo Frames in HANA Environments | Reference |
+| [2100040](https://me.sap.com/notes/2100040) | FAQ: Network and Connectivity | Reference |
 
 ## Usage
 
@@ -363,7 +363,7 @@ When adding new SAP notes:
 
 ## Resources
 
-- [SAP Note Search](https://launchpad.support.sap.com/#/notes)
+- [SAP Note Search](https://me.sap.com)
 - [SAP HANA on Nutanix Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
 - [SAP on Linux Documentation](https://www.sap.com/linux)
 - [Nutanix SAP Certified Systems](https://www.nutanix.com/sap)

@@ -433,5 +433,5 @@ This module uses:
 
 - [SAP S/4HANA Installation Guide](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE)
 - [SAP on Nutanix Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
-- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799) - SAP HANA on Nutanix
+- [SAP Note 1944799](https://me.sap.com/notes/1944799) - SAP HANA on Nutanix
 

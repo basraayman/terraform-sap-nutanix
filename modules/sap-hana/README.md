@@ -402,12 +402,12 @@ See [POST_DEPLOYMENT_CPU_CONFIG.md](../../docs/operations/POST_DEPLOYMENT_CPU_CO
 ## References
 
 - [SAP Sizing Guidelines](https://www.sap.com/about/benchmark/sizing.sizing-guidelines.html) - Official SAP Sizing
-- [SAP Note 1944799](https://launchpad.support.sap.com/#/notes/1944799) - SLES OS Installation
-- [SAP Note 1900823](https://launchpad.support.sap.com/#/notes/1900823) - Storage Connector API
-- [SAP Note 2686722](https://launchpad.support.sap.com/#/notes/2686722) - HANA on Nutanix AOS
-- [SAP Note 2205917](https://launchpad.support.sap.com/#/notes/2205917) - OS Settings for SLES 12
+- [SAP Note 1944799](https://me.sap.com/notes/1944799) - SLES OS Installation
+- [SAP Note 1900823](https://me.sap.com/notes/1900823) - Storage Connector API
+- [SAP Note 2686722](https://me.sap.com/notes/2686722) - HANA on Nutanix AOS
+- [SAP Note 2205917](https://me.sap.com/notes/2205917) - OS Settings for SLES 12
 - [SAP Note 2684254](https://me.sap.com/notes/2684254) - OS Settings for SLES 15
-- [SAP Note 2772999](https://launchpad.support.sap.com/#/notes/2772999) - RHEL 8.x Installation
-- [SAP Note 3108316](https://launchpad.support.sap.com/#/notes/3108316) - RHEL 9.x Installation
+- [SAP Note 2772999](https://me.sap.com/notes/2772999) - RHEL 8.x Installation
+- [SAP Note 3108316](https://me.sap.com/notes/3108316) - RHEL 9.x Installation
 - [Nutanix SAP HANA Best Practices](https://portal.nutanix.com/page/documents/solutions/details?targetId=BP-2065-SAP-HANA-on-Nutanix)
 

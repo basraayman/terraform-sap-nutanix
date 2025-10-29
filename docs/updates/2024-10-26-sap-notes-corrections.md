@@ -152,13 +152,13 @@ Per SAP Note 2686722:
 
 | SAP Note | Description | Module | Link |
 |----------|-------------|--------|------|
-| 1944799 | SAP HANA Guidelines for SLES Operating System Installation | sap-hana | [Link](https://launchpad.support.sap.com/#/notes/1944799) |
-| 1900823 | SAP HANA Storage Connector API | sap-hana | [Link](https://launchpad.support.sap.com/#/notes/1900823) |
-| 2686722 | SAP HANA virtualized on Nutanix AOS | sap-hana | [Link](https://launchpad.support.sap.com/#/notes/2686722) |
-| 2205917 | SAP HANA: OS Settings for SLES 12 | all | [Link](https://launchpad.support.sap.com/#/notes/2205917) |
+| 1944799 | SAP HANA Guidelines for SLES Operating System Installation | sap-hana | [Link](https://me.sap.com/notes/1944799) |
+| 1900823 | SAP HANA Storage Connector API | sap-hana | [Link](https://me.sap.com/notes/1900823) |
+| 2686722 | SAP HANA virtualized on Nutanix AOS | sap-hana | [Link](https://me.sap.com/notes/2686722) |
+| 2205917 | SAP HANA: OS Settings for SLES 12 | all | [Link](https://me.sap.com/notes/2205917) |
 | 2684254 | SAP HANA: OS Settings for SLES 15 | all | [Link](https://me.sap.com/notes/2684254) |
-| 2772999 | Red Hat Enterprise Linux 8.x: Installation and Configuration | all | [Link](https://launchpad.support.sap.com/#/notes/2772999) |
-| 3108316 | Red Hat Enterprise Linux 9.x: Installation and Configuration | all | [Link](https://launchpad.support.sap.com/#/notes/3108316) |
+| 2772999 | Red Hat Enterprise Linux 8.x: Installation and Configuration | all | [Link](https://me.sap.com/notes/2772999) |
+| 3108316 | Red Hat Enterprise Linux 9.x: Installation and Configuration | all | [Link](https://me.sap.com/notes/3108316) |
 
 ## Impact on Deployments
 

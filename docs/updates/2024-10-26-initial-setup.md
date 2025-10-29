@@ -12,7 +12,7 @@ Added or clarified official support contact information in multiple locations:
 
 **SAP Support:**
 - Website: https://support.sap.com
-- SAP Notes: https://launchpad.support.sap.com
+- SAP Notes: https://me.sap.com
 - Documentation: https://help.sap.com
 
 **Nutanix Support:**
